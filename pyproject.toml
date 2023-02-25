@@ -1,0 +1,132 @@
+[build-system]
+requires = ["poetry-core>=1.3.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+
+[tool.poetry]
+name = "bricks"
+version = "0.0.0"
+description = "Basic python modules to built on top of."
+authors = ["Warner Leijenaar <git@renraw.nl>"]
+readme = "README.md"
+packages = [
+  {include = "bricks", from = "src"},
+  {include = "bricks/py.typed", from = "src"},
+]
+
+
+[tool.poetry.urls]
+"Homepage" = "https://github.com/renraw-nl/bricks"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+typer = "^0.7.0"
+python-dotenv = "^0.21.0"
+structlog = "^22.3.0"
+python-json-logger = "^2.0.4"
+colorama = {version = "^0.4.6", markers = 'sys_platform != "win32"'}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+black = "^22.12.0"
+isort = "^5.11.4"
+ruff = "^0.0.213"
+mypy = "^1.0"
+pre-commit = "^2.21.0"
+interrogate = "^1.5.0"
+
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
+
+
+[tool.poetry.scripts]
+basics = 'basics.api.cli:main'
+
+
+[tool.pytest.ini_options]
+# asyncio_mode = "auto"
+# addopts = "--no-cov-on-fail --showlocals --strict-markers"
+addopts = "--showlocals --strict-markers"
+testpaths = ["tests"]
+norecursedirs = "_build var* .*cache .vscode .venv"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "serial",
+    "cli",
+    "etc",
+    "utils",
+]
+
+[tool.mypy]
+allow_redefinition = true
+disallow_any_generics = false
+disallow_subclassing_any = true
+disallow_untyped_calls = false
+disallow_untyped_defs = true
+implicit_reexport = true
+no_implicit_optional = true
+show_error_codes = true
+strict = true
+strict_equality = true
+strict_optional = false
+warn_redundant_casts = true
+warn_return_any = false
+warn_unused_configs = true
+warn_unused_ignores = true
+
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+exclude = '''
+/(
+   \.git
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.ruff_cache
+  | \.venv
+  | \.vscode
+  | build
+  | dist
+  | var
+)/
+'''
+
+[tool.isort]
+combine_as_imports = true
+force_grid_wrap = 0
+include_trailing_comma = true
+known_first_party = "builder, tests"
+line_length = 88
+multi_line_output = 3
+no_lines_before = "LOCALFOLDER"
+order_by_type = false
+reverse_relative = true
+profile = "black"
+
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-property-decorators = false
+ignore-module = true
+ignore-nested-functions = false
+ignore-nested-classes = true
+ignore-setters = false
+fail-under = 80
+exclude = ["docs", "build", ".venv", "var", ".*_cache"]
+ignore-regex = ["^get$", "^mock_.*", ".*BaseClass.*"]
+verbose = 0
+quiet = false
+whitelist-regex = []
+color = true
+# generate-badge = "."
+# badge-format = "svg"
