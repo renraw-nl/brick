@@ -32,11 +32,11 @@ with `logging.Logger` and structlog's `BoundLogger`.
 """
 import logging
 import sys
-import typing as t
 
 import structlog
 
-LoggerType = t.Union[logging.Logger]
+# LoggerType = t.Type[structlog.typing.BindableLogger]
+LoggerType = structlog.stdlib.BoundLogger
 
 
 def init(debug: bool = False) -> None:
@@ -46,13 +46,13 @@ def init(debug: bool = False) -> None:
     `debug` sets the log level, see `level()`.
     """
 
-    if logging.getLogger().hasHandlers():
+    if structlog.is_configured():
         return
 
     log_level = level(debug)
 
     # Processors used by both `structlog` and `logging`
-    shared_processors = [
+    shared_processors: list = [
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
         structlog.contextvars.merge_contextvars,
@@ -86,7 +86,7 @@ def init(debug: bool = False) -> None:
 
     # Depending if the environment is a tty terminal or not, select the renderer.
     if sys.stdout.isatty():
-        renderer = [
+        renderer: list = [
             structlog.dev.ConsoleRenderer(colors=True),
         ]
     else:
@@ -119,13 +119,13 @@ def logger(name: str = None) -> LoggerType:
     If `name` is not given `__package__` is used.
     """
 
-    if not logging.getLogger().hasHandlers():
+    if not structlog.is_configured():
         init()
 
     if name is None:
         name = __package__
 
-    return logging.getLogger(name)
+    return structlog.stdlib.get_logger(name)
 
 
 def level(debug: bool = False) -> int:

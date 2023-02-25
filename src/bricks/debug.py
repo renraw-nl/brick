@@ -41,12 +41,10 @@ def timeit(func: Callable = None, *, logger: log.LoggerType = None) -> Callable:
     if func is None:
         return partial(timeit, logger=logger)
 
-    elif not isinstance(func, Callable):
+    elif not callable(func):
         raise TypeError(
             "`func` is not Callable, was this timeit-decorator called with non-keyword"
             " arguments?",
-            func_type=type(func),
-            func=func,
         )
 
     name = callable_name(func)
@@ -54,8 +52,8 @@ def timeit(func: Callable = None, *, logger: log.LoggerType = None) -> Callable:
     if not logger or not isinstance(logger, log.LoggerType):
         logger = log.logger(name)
 
-    @wraps(func=func)
-    def wrapper(*args, **kwargs) -> Any:
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         """Wrapper method"""
 
         start_time = time.perf_counter()
@@ -83,12 +81,10 @@ def log_data(func: Callable = None, *, logger: log.LoggerType = None) -> Callabl
     if func is None:
         return partial(log_data, logger=logger)
 
-    elif not isinstance(func, Callable):
+    elif not callable(func):
         raise TypeError(
             "`func` is not Callable, was this log_data-decorator called with "
             "non-keyword arguments?",
-            func_type=type(func),
-            func=func,
         )
 
     name = callable_name(func)
@@ -96,8 +92,8 @@ def log_data(func: Callable = None, *, logger: log.LoggerType = None) -> Callabl
     if not logger or not isinstance(logger, log.LoggerType):
         logger = log.logger(name)
 
-    @wraps(func=func)
-    def wrapper(*args, **kwargs) -> Any:
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         """Wrapper method"""
 
         logger.debug(
